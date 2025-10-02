@@ -1,2 +1,2 @@
 all:
-	c++ *.cpp
+	c++ main.cpp server.cpp

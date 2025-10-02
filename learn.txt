@@ -1,0 +1,9 @@
+setsockopt =====> function; TCP_NODELAY  :Enabling TCP_NODELAY (TCP_NODELAY): 
+Disables the Nagle algorithm for TCP sockets, 
+which can reduce latency in certain scenarios by 
+sending smaller packets immediately instead of waiting to accumulate more data.
+
+
+
+WARNING: select() can monitor only file descriptors numbers that
+       are less than FD_SETSIZE 1024

@@ -33,39 +33,31 @@ void Server::Accept_connection()
     std::string msg;
     char test[1024];
     int client_fd;
-    int n_read;
-    char c;
 
 
-    
-  
-    // while(1)
-    // {
-        std::cout << "Accept: " ;
-        client_fd = accept(N.serverSocket, NULL, NULL);
-        std::cout << (client_fd < 0 ? "Failed\n": "Success\n");
-        N.clients_fd.push_back(client_fd);
-    // }
+    std::cout << "wait1: ";
+    std::getline(std::cin, msg);
+    std::cout << "Accept: " ;
+    client_fd = accept(N.serverSocket, NULL, NULL);
+    std::cout << (client_fd < 0 ? "Failed\n": "Success\n");
+    N.clients_fd.push_back(client_fd);
 
-    while(1)
+    std::cout << "wait2: ";
+    std::getline(std::cin, msg);
+    std::cout << "Accept: " ;
+    client_fd = accept(N.serverSocket, NULL, NULL);
+    std::cout << (client_fd < 0 ? "Failed\n": "Success\n");
+    N.clients_fd.push_back(client_fd);
+
+    for(unsigned int i = 0; i < N.clients_fd.size(); i++)
     {
-        std::cout << "1111111111111111\n";
-        n_read = recv(client_fd, &c, 1, 0);
-        std::cout << "bytes recived: " << n_read << std::endl;
-        if(n_read == 0)
-            break;
-        else if(n_read < 0)
-        {
-            std::cout << "error\n";
-            exit(1);
-        }
-
-        msg.push_back(c);
-  
+        recv(N.clients_fd[i], test, 1024, 0);
+        msg.append(test);
+        msg.append("Client ");
+        msg.append(std::to_string(i + 1));
+        msg.append(" connected\n");
     }
-    std::cout << "kamal: " << msg << std::endl;
 
-
- 
+    std::cout << "blablabla: " << msg;
 
 }
