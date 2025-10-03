@@ -8,64 +8,99 @@ Server::~Server()
 Server::Server(int port)
 {
     std::cout << "Server Constructor Called\n";
+    this->port = port;
+}
 
-    N.serverSocket = socket(AF_INET, SOCK_STREAM, 0);
-    if(N.serverSocket < 0)
+void Server::Start()
+{
+    listen_fd = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
+    if(listen_fd < 0)
     {
         std::cout << "Error: Func ==> Socket\n";
         exit(1);
     }
-    N.sAddress.sin_family = AF_INET;
-    N.sAddress.sin_port = htons(port);
-    N.sAddress.sin_addr.s_addr = 0; //INADDR_ANY
+    sAddress.sin_family = AF_INET;
+    sAddress.sin_port = htons(port);
+    sAddress.sin_addr.s_addr = 0; //INADDR_ANY
     
     std::cout << "Bind: " ;
-    std::cout << (bind(N.serverSocket, (sockaddr* )&N.sAddress, sizeof(N.sAddress)) < 0 ? "Failed\n": "Success\n");
-
+    std::cout << (bind(listen_fd, (sockaddr* )&sAddress, sizeof(sAddress)) < 0 ? "Failed\n": "Success\n");
 
     std::cout << "Listen: " ;
-    std::cout << (listen(N.serverSocket, 2) < 0 ? "Failed\n": "Success\n"); 
+    std::cout << (listen(listen_fd, 2) < 0 ? "Failed\n": "Success\n");
+    Accept_clients();
 
 }
 
-void Server::Accept_connection()
+void Server::Accept_clients()
 {
-    std::string msg;
-    char test[1024];
-    int client_fd;
-    int n_read;
-    char c;
+    int j;
 
-
-    
+    pollfd fd;
+    memset(&fd, 0, sizeof(fd));
+    fd.events = POLLIN;
+    fd.fd = listen_fd;
+    _fds.push_back(fd);
   
-    // while(1)
-    // {
-        std::cout << "Accept: " ;
-        client_fd = accept(N.serverSocket, NULL, NULL);
-        std::cout << (client_fd < 0 ? "Failed\n": "Success\n");
-        N.clients_fd.push_back(client_fd);
-    // }
-
     while(1)
     {
-        std::cout << "1111111111111111\n";
-        n_read = recv(client_fd, &c, 1, 0);
-        std::cout << "bytes recived: " << n_read << std::endl;
-        if(n_read == 0)
-            break;
-        else if(n_read < 0)
+        j = poll(_fds.data(), _fds.size(), -1);
+        if(j == -1)
         {
-            std::cout << "error\n";
+            std::cout << "error: in poll\n";
+            exit(0);
+        }
+        else
+        {
+            std::cout << "_fds: " << j << std::endl;
+        }
+        Check_IandO();
+
+        if(_fds.size() == 3)
+            break;
+
+}
+
+get_clients_fd(_fds);
+
+}
+
+
+void Server::Check_IandO()
+{
+    if(_fds[0].revents == POLLIN)
+    {
+        pollfd fd;
+        memset(&fd, 0, sizeof(fd));
+        fd.events = POLLIN;
+        //POLLIN
+
+        fd.fd = accept(listen_fd, NULL, NULL);
+        std::cout << "acceppppppppppppppppt: " << fd.fd << std::endl;
+        if(fd.fd < 0)
+        {
+            std::cout << "Error: in accept\n";
             exit(1);
         }
 
-        msg.push_back(c);
-  
+        // Must be check: the preiveus flags for socket ?????
+        fcntl(fd.fd, F_SETFL, O_NONBLOCK);
+
+        //fcntl Non Blocking I/O
+        _fds.push_back(fd);
+        Client new_client(fd.fd);
+                    std::cout << "qqqqqqqqqqqqqqsize of map " << clients.size() << std::endl;
+
+        clients[fd.fd] = new_client;
     }
-    std::cout << "kamal: " << msg << std::endl;
-
-
- 
-
+    for(unsigned int i = 1; i < _fds.size(); i++)
+    {
+        if(_fds[i].revents == POLLIN)
+        {
+            std::cout << "size of map " << clients.size() << std::endl;
+            std::cout << "yow test=============================== for fd\n";
+            std::cout << clients[4].get_fd() << std::endl;
+            Start_communication(clients[4]);
+        }
+    }
 }

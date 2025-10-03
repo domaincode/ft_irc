@@ -4,42 +4,42 @@
 #include <iostream>
 #include <sys/socket.h>
 #include <netinet/in.h>
-
-
+#include <map>
 #include <vector>
+#include "Client.hpp"
 
-typedef struct s_server
-{
-    std::vector<int> clients_fd;
-    int serverSocket;
-    sockaddr_in sAddress;
-}t_server;
+#include <unistd.h>
+#include <fcntl.h>
+#include <string.h>
+
+
+#include <poll.h>
+
 
 
 class Server
 {
     private:
-    t_server N;
+        int port;
+        std::map<int, Client> clients;
+        std::vector<pollfd> _fds;
+        int listen_fd;
+        sockaddr_in sAddress;
+        // t_server N;
 
 
     public:
         Server(int port);
         ~Server();
-        void Accept_connection();
+        void Start();
+        void Accept_clients();
+        void Check_IandO();
 
 };
 
-class Client
-{
-    private:
-        // int fd;
-        sockaddr_in cAddress;
+void get_clients_fd(std::vector<pollfd>& fds);
+void Start_communication(Client& client);
 
-    public:
-            int fd;
-        Client(int port);
-        ~Client();
-};
 
 
 

@@ -7,3 +7,22 @@ sending smaller packets immediately instead of waiting to accumulate more data.
 
 WARNING: select() can monitor only file descriptors numbers that
        are less than FD_SETSIZE 1024
+
+
+int poll(struct pollfd *fds, nfds_t nfds, int timeout);
+
+fds → pointer to an array of struct pollfd (the fds you want to watch)
+
+nfds → number of elements in fds array
+
+timeout → milliseconds to wait:
+
+-1 → wait forever
+
+0 → non-blocking, just check and return
+
+>0 → wait up to that many milliseconds
+
+returns: number of fds with events, 0 if timeout, -1 on error.
+
+
