@@ -1,2 +1,2 @@
 all:
-	c++ main.cpp server.cpp Utils.cpp Client.cpp -o server
+	c++ main.cpp Server.cpp Utils.cpp Client.cpp -o server

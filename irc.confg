@@ -1,0 +1,32 @@
+# Server Information
+server_name     = myirc.example.com
+server_info     = "My little IRC server"
+network_name    = MyIRCNet
+
+# Connection Settings
+port            = 6667
+ssl_port        = 6697
+password        = changeme
+
+# Message of the Day (MOTD)
+motd = "Welcome to MyIRCNet!\nEnjoy your stay.\n"
+
+# Limits
+max_clients     = 200
+ping_timeout    = 120
+
+# Admin Information
+admin_name      = "Admin User"
+admin_email     = "admin@example.com"
+
+# Operators (users with special privileges)
+operator root {
+    password = rootpass
+    mask = *@127.0.0.1
+}
+
+# Banned clients
+ban {
+    mask = *!*@badhost.com
+    reason = "Spammers not allowed"
+}

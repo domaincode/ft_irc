@@ -1,14 +1,12 @@
-#include "server.hpp"
+#include "Server.hpp"
+#include <list>
+
 
 
 
 
 int main(int argc, char** argv)
 {
-
-    // Client a(12);
-
-    // Client b = a;
 
     if(argc != 2)
     {
@@ -19,6 +17,7 @@ int main(int argc, char** argv)
 
    // std::cout << "FD_SETSIZE: " << FD_SETSIZE << std::endl;
     a.Start();
+    a.print_clients();
     
 
 }
