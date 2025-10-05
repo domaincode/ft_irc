@@ -37,15 +37,15 @@ class Server
         Server(int port);
         ~Server();
         void Start();
-        void Accept_clients();
+        void Use_Poll();
         void Check_IandO();
         void Start_communication(Client& client);
-        void validate_Login(Client& client);
+        bool Nick_isDuplicated(std::string& Nickname);
         void print_clients();
 
 };
 
-void get_clients_fd(std::vector<pollfd>& fds);
+
 
 
 

@@ -4,9 +4,16 @@
 
 
 
-
 int main(int argc, char** argv)
 {
+
+    // if(end == name.end())
+    // {
+    //     std::cout << "garbage value\n";
+    // }
+    // it++;
+    // std::cout << it->second << std::endl;
+    // std::cout << name.size() << std::endl;
 
     if(argc != 2)
     {

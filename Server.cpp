@@ -30,11 +30,11 @@ void Server::Start()
     //// Back log find the best value ????
     std::cout << "Listen: " ;
     std::cout << (listen(listen_fd, 2) < 0 ? "Failed\n": "Success\n");
-    Accept_clients();
+    Use_Poll();
 
 }
 
-void Server::Accept_clients()
+void Server::Use_Poll()
 {
     int j;
 
@@ -93,7 +93,7 @@ void Server::Check_IandO()
 
         //add the new client to the array for monitoring
         _fds.push_back(fd);
-        Client new_client(fd.fd);
+        Client new_client(fd.fd, this);
 
         // Client must have Default Constructor
         clients[fd.fd] = new_client;
@@ -135,45 +135,25 @@ void Server::Start_communication(Client& client)
     }
     
     //buffer += read
-    client.Set_msg() = buffer;
-    validate_Login(client);
+    client.Get_msg() = buffer;
+    client.validate_Login();
     
     std::cout << "Read from client: " << nb_read << std::endl;
     std::cout << "Message: ." << client.Get_msg() << "." << std::endl;
 }
 
 
-void Server::validate_Login(Client& client)
+bool Server::Nick_isDuplicated(std::string& Nickname)
 {
-    char c;
-
-    // will be upgread to be 3 
-    if(client.get_auth_level() == 2)
-        return ;
-    switch(client.get_auth_level())
+    for(std::map<int, Client>::iterator it = clients.begin(); it != clients.end(); it++)
     {
-        case(0):
-            //Check_Pass(msg, fd);
-            client.Check_Pass(password);
-            break;
-        case(1):
-            client.Check_Nickname(clients);
-        // case(2):
-            //Check_info
-        default:
-            std::cout << "Default switch value\n";
+        if(Nickname == it->second.get_Nickname())
+            return true;
     }
-    c = client.get_auth_level() + '0';
-   // std::cout << "bruhhhh: " << client.get_auth_level() << std::endl;
-
-   //tkharbi9
-    send(client.get_fd(), LEVEL, sizeof(LEVEL), 0);
-    send(client.get_fd(), &c, 1, 0);
-     write(client.get_fd(), "\n", 1);
-
-     if(c == '2')
-        send(client.get_fd(), WELCOME, sizeof(WELCOME), 0);
+    return false;
 }
+
+
 
 void Server::print_clients()
 {
